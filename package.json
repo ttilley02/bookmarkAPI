@@ -1,7 +1,6 @@
 {
-  "name": "express-boilerplate",
+  "name": "bookmarks-server",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "mocha --require test/setup.js",
@@ -27,5 +26,17 @@
     "mocha": "^7.1.2",
     "nodemon": "^2.0.4",
     "supertest": "^4.0.2"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ttilley02/server-boilerplate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ttilley02/server-boilerplate/issues"
+  },
+  "homepage": "https://github.com/ttilley02/server-boilerplate#readme",
+  "description": ""
 }
