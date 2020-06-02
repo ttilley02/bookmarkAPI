@@ -5,7 +5,15 @@ const bookmarksStore = [
     url: 'www.wikipedia.org',
     description: 'Check me out',
     rating: '5'
+   },
+   {
+   id: 2,
+   title: 'Task two',
+   url: 'www.yahoo.com',
+   description: 'Check me out',
+   rating: '4'
    }
+
 
 ];
 

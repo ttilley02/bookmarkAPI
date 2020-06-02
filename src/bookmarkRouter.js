@@ -1,9 +1,10 @@
-const express = require('express')
+const express = require('express');
 const winston = require('winston');
-const { v4: uuid } = require('uuid')
-const bookmarkRouter = express.Router()
-const bodyParser = express.json()
-const store = require('./store')
+const { v4: uuid } = require('uuid');
+const bookmarkRouter = express.Router();
+const bodyParser = express.json();
+const store = require('./store');
+const BookarksService = require('./bookmarks-service');
 
 const logger = winston.createLogger({
   level: 'info',
@@ -15,15 +16,15 @@ const logger = winston.createLogger({
 
 bookmarkRouter
   .route('/bookmarks')
-  .get((req, res) => {
-    // move implementation logic into here
-         res
-          .json(store.bookmarksStore);
-   
-        
-  })
+  .get((req, res, next) => {
+    const knexInstance = req.app.get('db');
+   BookarksService.getAllbookmarks(knexInstance)
+        .then(bookmark => {
+           res.json(bookmark);
+         })
+        .catch(next);
+    })
   .post(bodyParser, (req, res) => {
-    // move implementation logic into here
         const {title,url,description,rating} = req.body;
         
         if (!title) {
@@ -72,28 +73,25 @@ bookmarkRouter
           .location(`http://localhost:8000/bookmarks/${id}`)
           .json(bookmark);
         
-  })
+  });
 
 bookmarkRouter
   .route('/bookmarks/:id')
-  .get((req, res) => {
-    // move implementation logic into here
-   
-        const { id } = req.params;
-        const bookmark = store.bookmarksStore.find(bookmark => bookmark.id == id);
-      
-        // make sure we found a Bookmark
-        if (!bookmark) {
-          logger.error(`Bookmark with id ${id} not found.`);
-          return res
-            .status(404)
-            .send('Bookmark Not Found');
-        }
-      
+  .get((req, res, next) => {
+    const knexInstance = req.app.get('db');
+    BookarksService.getById(knexInstance, req.params.id)
+      .then(bookmark => {
+       if (!bookmark) {
+                  return res.status(404).json({
+                    error: { message: `bookmark doesn't exist` }
+                  });
+                }
+              
         res.json(bookmark);
-    
-          
   })
+  .catch(next)
+})
+
   .delete((req, res) => {
     // move implementation logic into here
         const { id } = req.params;
@@ -114,8 +112,7 @@ bookmarkRouter
         res
           .status(204)
           .end();
- 
+   });
+  
 
-  })
-
-module.exports = bookmarkRouter
+module.exports = bookmarkRouter;
